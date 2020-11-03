@@ -33,7 +33,7 @@
 <script type="text/javascript" src="denver_neighborhoods.js"></script>
 
 <script>
-	var neighborhoods = L.layerGroup();
+	var income = L.layerGroup();
 
 
 	function highlightFeature(e) {
@@ -60,7 +60,15 @@
 	var popup = L.popup();
 
 	function showPopup(e) {
-		var text = e.target.feature.properties.nbhd_name;
+		var text = "<b>"+e.target.feature.properties.nbhd_name +"<br>"
+			+e.target.feature.properties.ttl_pop+"</b> total population<br>"
+			+"------------------------"
+			+"<br>Rent As Percent of Income: "+e.target.feature.properties.rent_as_percent+"%"
+			+"<br>Median Gross Rent: "+e.target.feature.properties.median_gross_rent
+			+"<br>Median Home Value: "+e.target.feature.properties.median_home_value
+			+"<br>Median Income: "+e.target.feature.properties.median_income
+			+"<br>Unemployment: "+e.target.feature.properties.unemployment
+			+"<br>Poverty Level: "+e.target.feature.properties.poverty_level;
 		popup.setLatLng(e.latlng).setContent(text).openOn(map);
 	}
 
@@ -77,10 +85,33 @@
 		});
 	}
 
+	function getColor(d) {
+	// console.log(d);
+    return d > 50 ? '#800026' :
+           d > 45  ? '#BD0026' :
+           d > 40  ? '#E31A1C' :
+           d > 35  ? '#FC4E2A' :
+           d > 30   ? '#FD8D3C' :
+           d > 20   ? '#FEB24C' :
+           d > 10   ? '#FED976' :
+                      '#FFEDA0';
+}
+function style(feature) {
+	console.log(feature.properties);
+    return {
+        fillColor: getColor(feature.properties.rent_as_percent),
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7
+    };
+}
+
 	geojson = L.geoJson(hoodData, {
-		// style: style,
+		style: style,
 		onEachFeature: onEachFeature
-	}).addTo(neighborhoods);
+	}).addTo(income);
 
 
 	var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>, ' +
@@ -94,7 +125,7 @@
 		center: [39.73, -104.87],
 		zoom: 11,
 		minZoom: 11,
-		layers: [grayscale, neighborhoods]
+		layers: [grayscale, income]
 	});
 
 	var baseLayers = {
@@ -103,8 +134,8 @@
 	};
 
 	var overlays = {
-		"Neighborhoods": neighborhoods,
-		//"Income Avg.": incomes,
+		"Income Levels": income,
+		// "Neighborhoods": neighborhoods,
 		//Demographics
 	};
 	L.control.layers(baseLayers, overlays).addTo(map);
