@@ -12,63 +12,62 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
 
-
-	<style>
-		html, body {
-			height: 100%;
-			margin: 0;
-		}
-		#map {
-			width: 1200px;
-			height: 800px;
-		}
-	</style>
-
-	
+	<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-
-<div id='map'></div>
+	<div class="container">
+		<h1>Denver Dashboard Demo</h1>
+	</div>
+	<div class="container">
+		<h2>Overview</h2>
+	</div>
+	<div class="grid">
+		<div>
+			<h2>Population estimate</h2>
+			<h1>727,211</h1>
+			<div>+21% since April 1, 2010</div>
+		</div>
+		<div>
+			<h2>Median gross rent</h2>
+			<h1>$1,217</h1>
+			<div>2014-2018</div>
+		</div>
+		<div>
+			<h2>Median gross rent</h2>
+			<h1>$1,217</h1>
+			<div>2014-2018</div>
+		</div>
+		<div>
+			<h2>Building permits</h2>
+			<h1>7,330</h1>
+			<div>housing in Denver County, 2019</div>
+		</div>
+		<div>
+			<h2>Mean commute</h2>
+			<h1>25.4</h1>
+			<div>minutes, workers 16+, 2014-2018</div>
+		</div>
+	</div>
+	<div class="container">
+		<h2>Mapping</h2>
+	</div>
+		<div id='map'></div>
 
 <script type="text/javascript" src="denver_neighborhoods.js"></script>
 
 <script>
 	var income = L.layerGroup();
-
-
-	function highlightFeature(e) {
-		var layer = e.target;
-
-		layer.setStyle({
-			weight: 5,
-			color: '#666',
-			dashArray: '',
-			fillOpacity: 0.7
-		});
-
-		if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-			layer.bringToFront();
-		}
-	}
-
-	var geojson;
-
-	function resetHighlight(e) {
-		geojson.resetStyle(e.target);
-	}
-
+	var housing = L.layerGroup();
+	var demo = L.layerGroup();
 	var popup = L.popup();
 
-	function showPopup(e) {
+	function showIncomePopup(e) {
 		var text = "<b>"+e.target.feature.properties.nbhd_name +"<br>"
 			+e.target.feature.properties.ttl_pop+"</b> total population<br>"
 			+"------------------------"
-			+"<br>Rent As Percent of Income: "+e.target.feature.properties.rent_as_percent+"%"
-			+"<br>Median Gross Rent: "+e.target.feature.properties.median_gross_rent
-			+"<br>Median Home Value: "+e.target.feature.properties.median_home_value
-			+"<br>Median Income: "+e.target.feature.properties.median_income
-			+"<br>Unemployment: "+e.target.feature.properties.unemployment
-			+"<br>Poverty Level: "+e.target.feature.properties.poverty_level;
+			+"<br>Median Income: $"+e.target.feature.properties.median_income
+			+"<br>Unemployment: "+e.target.feature.properties.unemployment+"%"
+			+"<br>Poverty Level: "+e.target.feature.properties.poverty_level+"%";
 		popup.setLatLng(e.latlng).setContent(text).openOn(map);
 	}
 
@@ -76,30 +75,25 @@
 		 map.fitBounds(e.target.getBounds());
 	}
 
-	function onEachFeature(feature, layer) {
+	function onEachFeatureIncome(feature, layer) {
 		layer.on({
-			mouseover: highlightFeature,
-			mouseout: resetHighlight,
-			// dblclick: zoomToFeature,
-			click: showPopup
+			click: showIncomePopup
 		});
 	}
 
-	function getColor(d) {
-	// console.log(d);
-    return d > 50 ? '#800026' :
-           d > 45  ? '#BD0026' :
-           d > 40  ? '#E31A1C' :
-           d > 35  ? '#FC4E2A' :
-           d > 30   ? '#FD8D3C' :
-           d > 20   ? '#FEB24C' :
-           d > 10   ? '#FED976' :
-                      '#FFEDA0';
+	function getIncomeColor(d) {
+    return d < 10000 ? '#800026' :
+           d < 20000  ? '#BD0026' :
+           d < 30000  ? '#E31A1C' :
+           d < 40000  ? '#FC4E2A' :
+           d < 60000   ? '#FD8D3C' :
+           d < 70000   ? '#FEB24C' :
+           d < 100000   ? '#FED976' :
+                      '#fff';
 }
 function style(feature) {
-	console.log(feature.properties);
     return {
-        fillColor: getColor(feature.properties.rent_as_percent),
+        fillColor: getIncomeColor(feature.properties.median_income),
         weight: 2,
         opacity: 1,
         color: 'white',
@@ -110,19 +104,93 @@ function style(feature) {
 
 	geojson = L.geoJson(hoodData, {
 		style: style,
-		onEachFeature: onEachFeature
+		onEachFeature: onEachFeatureIncome
 	}).addTo(income);
+/******************************************/
+
+function showHousingPopup(e) {
+		var text = "<b>"+e.target.feature.properties.nbhd_name +"<br>"
+			+e.target.feature.properties.ttl_pop+"</b> total population<br>"
+			+"------------------------"
+			+"<br>Rent As Percent of Income: "+e.target.feature.properties.rent_as_percent+"%"
+			+"<br>Median Gross Rent: $"+e.target.feature.properties.median_gross_rent
+			+"<br>Median Home Value: $"+e.target.feature.properties.median_home_value;
+		popup.setLatLng(e.latlng).setContent(text).openOn(map);
+	}
+
+	function zoomToFeature(e) {
+		 map.fitBounds(e.target.getBounds());
+	}
+
+	function onEachFeatureHousing(feature, layer) {
+		layer.on({
+			click: showHousingPopup
+		});
+	}
+
+	function getHousingColor(d) {
+    return d > 40 ? '#800026' :
+           d > 35  ? '#BD0026' :
+           d > 30  ? '#E31A1C' :
+           d > 25  ? '#FC4E2A' :
+           d > 20   ? '#FD8D3C' :
+           d > 10   ? '#FEB24C' :
+           d > 0   ? '#FED976' :
+                      '#fff';
+}
+function housingStyle(feature) {
+    return {
+        fillColor: getHousingColor(feature.properties.rent_as_percent),
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7
+    };
+}
+
+	geojson = L.geoJson(hoodData, {
+		style: housingStyle,
+		onEachFeature: onEachFeatureHousing
+	}).addTo(housing);
+/******************************************/
+function showDemoPopup(e) {
+		var text = "<b>"+e.target.feature.properties.nbhd_name +"<br>"
+			+e.target.feature.properties.ttl_pop+"</b> total population<br>"
+			+"------------------------"
+			+"<br>White: "+e.target.feature.properties.race_white+"%"
+			+"<br>Hispanic or Latino (any race): "+e.target.feature.properties.race_lantinx+"%"
+			+"<br>Black or African American: "+e.target.feature.properties.race_black+"%"
+			+"<br>Asian: "+e.target.feature.properties.race_asian+"%"
+			+"<br>American Indian or Alaska Native: "+e.target.feature.properties.race_indigenous+"%"
+			+"<br>Two or More Races: "+e.target.feature.properties.race_2+"%"
+			+"<br>Some Other Race: "+e.target.feature.properties.race_other+"%"
+			+"<br>------------------------"
+			+"<br>Median Age: "+e.target.feature.properties.median_age+"%"
+			+"<br>Foreign Born: "+e.target.feature.properties.foreign_born+"%";
+		popup.setLatLng(e.latlng).setContent(text).openOn(map);
+	}
+
+	function onEachFeatureDemo(feature, layer) {
+		layer.on({
+			click: showDemoPopup
+		});
+	}
+
+	geojson = L.geoJson(hoodData, {
+		onEachFeature: onEachFeatureDemo
+	}).addTo(demo);
+/******************************************/
 
 
-	var mbAttr = 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>, ' +
-			'Sources: City and County of Denver Dept. of Community Planning and Development',
+	var mbAttr = 'Sources: City and County of Denver Dept. of Community Planning and Development',
 		mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
 
 	var grayscale   = L.tileLayer(mbUrl, {id: 'mapbox/light-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr}),
 		streets  = L.tileLayer(mbUrl, {id: 'mapbox/streets-v11', tileSize: 512, zoomOffset: -1, attribution: mbAttr});
 
 	var map = L.map('map', {
-		center: [39.73, -104.87],
+		center: [39.76, -104.87],
 		zoom: 11,
 		minZoom: 11,
 		layers: [grayscale, income]
@@ -135,10 +203,11 @@ function style(feature) {
 
 	var overlays = {
 		"Income Levels": income,
-		// "Neighborhoods": neighborhoods,
-		//Demographics
+		"Housing": housing,
+		"Demographics": demo
 	};
-	L.control.layers(baseLayers, overlays).addTo(map);
+	L.control.layers(overlays,baseLayers).addTo(map);
+	// L.control.layers(baseLayers,overlays).addTo(map);
 </script>
 
 
