@@ -92,3 +92,17 @@ dd {
     width: 15em;
     margin: 0 0 0 1em;
 }
+
+.footer {
+    padding-bottom: 3rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-gap: 1rem;
+}
+
+.header {
+    /* padding-bottom: 3rem; */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-gap: 1rem;
+}
