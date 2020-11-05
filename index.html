@@ -23,33 +23,64 @@
 	</div>
 	<div class="grid">
 		<div>
-			<h2>Population estimate</h2>
+			<h2>Population Estimate</h2>
 			<h1>727,211</h1>
-			<div>+21% since April 1, 2010</div>
+			<div>+21% since April 1, 2010,<br> US Census</div>
 		</div>
 		<div>
-			<h2>Median gross rent</h2>
+			<h2>Median Gross Rent</h2>
 			<h1>$1,217</h1>
-			<div>2014-2018</div>
+			<div>2014-2018, US Census</div>
 		</div>
 		<div>
-			<h2>Median gross rent</h2>
-			<h1>$1,217</h1>
-			<div>2014-2018</div>
-		</div>
-		<div>
-			<h2>Building permits</h2>
+			<h2>Building Permits</h2>
 			<h1>7,330</h1>
-			<div>housing in Denver County, 2019</div>
+			<div>for housing in Denver County, 2019, US Census</div>
 		</div>
 		<div>
-			<h2>Mean commute</h2>
+			<h2>Mean Commute</h2>
 			<h1>25.4</h1>
-			<div>minutes, workers 16+, 2014-2018</div>
+			<div>minutes, workers 16+,<br> 2014-2018, US Census</div>
+		</div>
+		<div>
+			<h2>Persons in Poverty</h2>
+			<h1>13.8%</h1>
+			<div>5-year estimate from the 2018 American Community Survey</div>
 		</div>
 	</div>
 	<div class="container">
-		<h2>Mapping</h2>
+		<h2>Maps</h2>
+		<div class="grid2">
+			<div>
+				<h2>Income Levels</h2>
+				<div>Median Income
+					<p>
+						<dt class="color_a"></dt> < $10k
+						<dt class="color_b"></dt> < $20k
+						<dt class="color_c"></dt> < $30k 
+						<dt class="color_d"></dt> < $40k 
+						<dt class="color_e"></dt> < $60k
+						<dt class="color_f"></dt> < $70k
+						<dt class="color_g"></dt> > $70k
+					</p>
+				</div>
+			</div>
+
+			<div>
+				<h2>Housing</h2>
+				<div>Rent As Percent of Income
+					<p>
+						<dt class="color_a"></dt> > 40 
+						<dt class="color_b"></dt> > 35 
+						<dt class="color_c"></dt> > 30 
+						<dt class="color_d"></dt> > 25 
+						<dt class="color_e"></dt> > 20 
+						<dt class="color_f"></dt> > 10 
+						<dt class="color_g"></dt> No Data
+					</p>
+				</div>
+			</div>
+		</div>
 	</div>
 		<div id='map'></div>
 
@@ -88,7 +119,7 @@
            d < 40000  ? '#FC4E2A' :
            d < 60000   ? '#FD8D3C' :
            d < 70000   ? '#FEB24C' :
-           d < 100000   ? '#FED976' :
+           d > 70000   ? '#FED976' :
                       '#fff';
 }
 function style(feature) {
@@ -183,7 +214,7 @@ function showDemoPopup(e) {
 /******************************************/
 
 
-	var mbAttr = 'Sources: City and County of Denver Dept. of Community Planning and Development',
+	var mbAttr = 'Sources: City and County of Denver Dept. of Community Planning and Development, US Census',
 		mbUrl = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
 
 	var grayscale   = L.tileLayer(mbUrl, {id: 'mapbox/light-v9', tileSize: 512, zoomOffset: -1, attribution: mbAttr}),
