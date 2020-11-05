@@ -1,0 +1,30 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    background: #f0f0f0;
+}
+#map {
+    width: 1200px;
+    height: 700px;
+    box-shadow: 0 4px 8px 0 rgba(94, 93, 93, 0.2), 0 6px 20px 0 rgba(94, 93, 93, 0.19);
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-gap: 1rem;
+}
+.container {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    border-radius: 1rem;
+}
+.grid > div {
+    box-shadow: 0 4px 8px 0 rgba(94, 93, 93, 0.2), 0 6px 20px 0 rgba(94, 93, 93, 0.19);
+    padding: 1.5rem;
+    border-radius: 3px;
+    background: #fff;
+}
+body {
+    margin: 2rem;
+    font: 12px system-ui;
+}
